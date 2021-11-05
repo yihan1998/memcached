@@ -794,7 +794,7 @@ then
 elif test "$GCC" = "yes"
 then
   GCC_VERSION=`$CC -dumpversion`
-  CFLAGS="$CFLAGS -Werror -pedantic -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls"
+  CFLAGS="$CFLAGS -O3 -g -fno-stack-protector -Wall -fPIC"
   if test "x$enable_asan" = "xyes"; then
     CFLAGS="$CFLAGS -fsanitize=address"
   fi
@@ -825,8 +825,6 @@ dnl Link to Hoard
 hoard_dir=/home/yihan-18/Hoard/src
 LDFLAGS="-L$hoard_dir $LDFLAGS"
 LIBS="$LIBS -lhoard"
-
-CFLAGS="$CFLAGS -O3"
 
 AC_CONFIG_FILES(Makefile doc/Makefile)
 AC_OUTPUT
