@@ -1204,7 +1204,7 @@ static void *slab_rebalance_thread(void *arg) {
     int backoff_timer = 1;
     int backoff_max = 1000;
     /* So we first pass into cond_wait with the mutex held */
-    mutex_lock(&slabs_rebalance_lock);
+    do_mutex_lock(&slabs_rebalance_lock);
 
     /* Must finish moving page before stopping */
     while (slab_rebalance_signal || do_run_slab_rebalance_thread) {
@@ -1237,7 +1237,7 @@ static void *slab_rebalance_thread(void *arg) {
     }
 
     // TODO: cancel in-flight slab page move
-    mutex_unlock(&slabs_rebalance_lock);
+    do_mutex_unlock(&slabs_rebalance_lock);
     return NULL;
 }
 
@@ -1332,7 +1332,7 @@ int start_slab_maintenance_thread(void) {
 /* The maintenance thread is on a sleep/loop cycle, so it should join after a
  * short wait */
 void stop_slab_maintenance_thread(void) {
-    mutex_lock(&slabs_rebalance_lock);
+    do_mutex_lock(&slabs_rebalance_lock);
     do_run_slab_rebalance_thread = 0;
     pthread_cond_signal(&slab_rebalance_cond);
     pthread_mutex_unlock(&slabs_rebalance_lock);

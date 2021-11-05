@@ -884,8 +884,8 @@ conn *conn_new(const int sfd, const enum conn_states init_state, const int event
 void conn_worker_readd(conn *c);
 extern int daemonize(int nochdir, int noclose);
 
-#define mutex_lock(x) pthread_mutex_lock(x)
-#define mutex_unlock(x) pthread_mutex_unlock(x)
+#define do_mutex_lock(x) pthread_mutex_lock(x)
+#define do_mutex_unlock(x) pthread_mutex_unlock(x)
 
 #include "stats_prefix.h"
 #include "slabs.h"

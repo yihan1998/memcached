@@ -861,10 +861,10 @@ void item_stats(ADD_STAT add_stats, void *c) {
 
 bool item_stats_sizes_status(void) {
     bool ret = false;
-    mutex_lock(&stats_sizes_lock);
+    do_mutex_lock(&stats_sizes_lock);
     if (stats_sizes_hist != NULL)
         ret = true;
-    mutex_unlock(&stats_sizes_lock);
+    do_mutex_unlock(&stats_sizes_lock);
     return ret;
 }
 
@@ -877,7 +877,7 @@ void item_stats_sizes_init(void) {
 }
 
 void item_stats_sizes_enable(ADD_STAT add_stats, void *c) {
-    mutex_lock(&stats_sizes_lock);
+    do_mutex_lock(&stats_sizes_lock);
     if (!settings.use_cas) {
         APPEND_STAT("sizes_status", "error", "");
         APPEND_STAT("sizes_error", "cas_support_disabled", "");
@@ -892,17 +892,17 @@ void item_stats_sizes_enable(ADD_STAT add_stats, void *c) {
     } else {
         APPEND_STAT("sizes_status", "enabled", "");
     }
-    mutex_unlock(&stats_sizes_lock);
+    do_mutex_unlock(&stats_sizes_lock);
 }
 
 void item_stats_sizes_disable(ADD_STAT add_stats, void *c) {
-    mutex_lock(&stats_sizes_lock);
+    do_mutex_lock(&stats_sizes_lock);
     if (stats_sizes_hist != NULL) {
         free(stats_sizes_hist);
         stats_sizes_hist = NULL;
     }
     APPEND_STAT("sizes_status", "disabled", "");
-    mutex_unlock(&stats_sizes_lock);
+    do_mutex_unlock(&stats_sizes_lock);
 }
 
 void item_stats_sizes_add(item *it) {
@@ -933,7 +933,7 @@ void item_stats_sizes_remove(item *it) {
  * which don't change.
  */
 void item_stats_sizes(ADD_STAT add_stats, void *c) {
-    mutex_lock(&stats_sizes_lock);
+    do_mutex_lock(&stats_sizes_lock);
 
     if (stats_sizes_hist != NULL) {
         int i;
@@ -949,7 +949,7 @@ void item_stats_sizes(ADD_STAT add_stats, void *c) {
     }
 
     add_stats(NULL, 0, NULL, 0, c);
-    mutex_unlock(&stats_sizes_lock);
+    do_mutex_unlock(&stats_sizes_lock);
 }
 
 /** wrapper around assoc_find which does the lazy expiration logic */

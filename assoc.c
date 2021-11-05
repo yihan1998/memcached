@@ -195,7 +195,7 @@ int hash_bulk_move = DEFAULT_HASH_BULK_MOVE;
 
 static void *assoc_maintenance_thread(void *arg) {
 
-    mutex_lock(&maintenance_lock);
+    do_mutex_lock(&maintenance_lock);
     while (do_run_maintenance_thread) {
         int ii = 0;
 
@@ -258,7 +258,7 @@ static void *assoc_maintenance_thread(void *arg) {
             }
         }
     }
-    mutex_unlock(&maintenance_lock);
+    do_mutex_unlock(&maintenance_lock);
     return NULL;
 }
 
@@ -283,10 +283,10 @@ int start_assoc_maintenance_thread() {
 }
 
 void stop_assoc_maintenance_thread() {
-    mutex_lock(&maintenance_lock);
+    do_mutex_lock(&maintenance_lock);
     do_run_maintenance_thread = 0;
     pthread_cond_signal(&maintenance_cond);
-    mutex_unlock(&maintenance_lock);
+    do_mutex_unlock(&maintenance_lock);
 
     /* Wait for the maintenance thread to stop */
     pthread_join(maintenance_tid, NULL);
@@ -305,7 +305,7 @@ void *assoc_get_iterator(void) {
         return NULL;
     }
     // this will hang the caller while a hash table expansion is running.
-    mutex_lock(&maintenance_lock);
+    do_mutex_lock(&maintenance_lock);
     return iter;
 }
 
@@ -358,6 +358,6 @@ void assoc_iterate_final(void *iterp) {
     if (iter->bucket_locked) {
         item_unlock(iter->bucket);
     }
-    mutex_unlock(&maintenance_lock);
+    do_mutex_unlock(&maintenance_lock);
     free(iter);
 }

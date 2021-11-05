@@ -111,7 +111,7 @@ static void thread_libevent_process(evutil_socket_t fd, short which, void *arg);
  */
 
 void item_lock(uint32_t hv) {
-    mutex_lock(&item_locks[hv & hashmask(item_lock_hashpower)]);
+    do_mutex_lock(&item_locks[hv & hashmask(item_lock_hashpower)]);
 }
 
 void *item_trylock(uint32_t hv) {
@@ -123,11 +123,11 @@ void *item_trylock(uint32_t hv) {
 }
 
 void item_trylock_unlock(void *lock) {
-    mutex_unlock((pthread_mutex_t *) lock);
+    do_mutex_unlock((pthread_mutex_t *) lock);
 }
 
 void item_unlock(uint32_t hv) {
-    mutex_unlock(&item_locks[hv & hashmask(item_lock_hashpower)]);
+    do_mutex_unlock(&item_locks[hv & hashmask(item_lock_hashpower)]);
 }
 
 static void wait_for_thread_registration(int nthreads) {

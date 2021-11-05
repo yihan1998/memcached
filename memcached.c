@@ -322,7 +322,7 @@ static void *conn_timeout_thread(void *arg) {
 
     useconds_t timeslice = 1000000 / sleep_slice;
 
-    mutex_lock(&conn_timeout_lock);
+    do_mutex_lock(&conn_timeout_lock);
     while(do_run_conn_timeout_thread) {
         if (settings.verbose > 2)
             fprintf(stderr, "idle timeout thread at top of connection list\n");
@@ -375,7 +375,7 @@ static void *conn_timeout_thread(void *arg) {
         pthread_cond_timedwait(&conn_timeout_cond, &conn_timeout_lock, &to_sleep);
     }
 
-    mutex_unlock(&conn_timeout_lock);
+    do_mutex_unlock(&conn_timeout_lock);
     return NULL;
 }
 
@@ -399,10 +399,10 @@ static int start_conn_timeout_thread() {
 int stop_conn_timeout_thread(void) {
     if (!do_run_conn_timeout_thread)
         return -1;
-    mutex_lock(&conn_timeout_lock);
+    do_mutex_lock(&conn_timeout_lock);
     do_run_conn_timeout_thread = 0;
     pthread_cond_signal(&conn_timeout_cond);
-    mutex_unlock(&conn_timeout_lock);
+    do_mutex_unlock(&conn_timeout_lock);
     pthread_join(conn_timeout_tid, NULL);
     return 0;
 }

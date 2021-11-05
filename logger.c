@@ -353,9 +353,9 @@ uint64_t logger_get_gid(void) {
 #elif defined(__sun)
     return atomic_inc_64_nv(&logger_gid);
 #else
-    mutex_lock(&logger_atomics_mutex);
+    do_mutex_lock(&logger_atomics_mutex);
     uint64_t res = ++logger_gid;
-    mutex_unlock(&logger_atomics_mutex);
+    do_mutex_unlock(&logger_atomics_mutex);
     return res;
 #endif
 }
@@ -366,9 +366,9 @@ void logger_set_gid(uint64_t gid) {
 #elif defined(__sun)
     atomic_add_64(&logger_gid);
 #else
-    mutex_lock(&logger_atomics_mutex);
+    do_mutex_lock(&logger_atomics_mutex);
     logger_gid = gid;
-    mutex_unlock(&logger_atomics_mutex);
+    do_mutex_unlock(&logger_atomics_mutex);
 #endif
 }
 
