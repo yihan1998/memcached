@@ -809,5 +809,20 @@ then
   CFLAGS="$CFLAGS -errfmt=error -errwarn -errshort=tags"
 fi
 
+dnl Link to Cetus
+cetus_dir=/home/yihan-18/nus-sys/cetus/Cetus
+LDFLAGS="-L$cetus_dir $LDFLAGS"
+LIBS="$LIBS -lcetus"
+
+dnl Link to mThread
+mthread_dir=/home/yihan-18/nus-sys/cetus/mthread
+LDFLAGS="-L$mthread_dir $LDFLAGS"
+LIBS="$LIBS -lmthread"
+
+dnl Link to Hoard
+hoard_dir=/home/yihan-18/Hoard/src
+LDFLAGS="-L$hoard_dir $LDFLAGS"
+LIBS="$LIBS -lhoard"
+
 AC_CONFIG_FILES(Makefile doc/Makefile)
 AC_OUTPUT
