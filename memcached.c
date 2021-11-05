@@ -109,6 +109,8 @@ static void complete_nread(conn *c);
 
 static void conn_free(conn *c);
 
+int memcached_main (void * arg);
+
 /** exported globals **/
 struct stats stats;
 struct stats_state stats_state;
@@ -4594,8 +4596,8 @@ static int _mc_meta_load_cb(const char *tag, void *ctx, void *data) {
 int memcached_main (void * arg) {
     cetus_init((struct cetus_param *)arg);
 
-    int argc = arg->argc;
-    char ** argv = arg->argv;
+    int argc = ((struct cetus_param *)arg)->argc;
+    char ** argv = ((struct cetus_param *)arg)->argv;
 
     int c;
     bool lock_memory = false;
