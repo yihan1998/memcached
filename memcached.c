@@ -4857,6 +4857,7 @@ int memcached_main (void * arg) {
 #else
     while (-1 != (c = getopt(argc, argv, shortopts))) {
 #endif
+        fprintf(stdout, " >> argv: %s\n", optarg);
         switch (c) {
         case 'A':
             /* enables "shutdown" command */
