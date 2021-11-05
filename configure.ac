@@ -811,11 +811,13 @@ fi
 
 dnl Link to Cetus
 cetus_dir=/home/yihan-18/nus-sys/cetus/Cetus
+CFLAGS="$CFLAGS -I$cetus_dir/include/"
 LDFLAGS="-L$cetus_dir $LDFLAGS"
 LIBS="$LIBS -lcetus"
 
 dnl Link to mThread
 mthread_dir=/home/yihan-18/nus-sys/cetus/mthread
+CFLAGS="$CFLAGS -I$mthread_dir/include/"
 LDFLAGS="-L$mthread_dir $LDFLAGS"
 LIBS="$LIBS -lmthread"
 
