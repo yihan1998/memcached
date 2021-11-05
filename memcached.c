@@ -4599,6 +4599,12 @@ int memcached_main (void * arg) {
     int argc = ((struct cetus_param *)arg)->argc;
     char ** argv = ((struct cetus_param *)arg)->argv;
 
+    fprintf(stdout, " ======================= ");
+    for (int i = 0; i < argc; i++) {
+        fprintf(stdout, " \t argv[%d]: %s\n", i, argv[i]);
+    }
+    fprintf(stdout, " ======================= ");
+    
     int c;
     bool lock_memory = false;
     bool do_daemonize = false;
@@ -4809,6 +4815,8 @@ int memcached_main (void * arg) {
           "o:"  /* Extended generic options */
           "N:"  /* NAPI ID based thread selection */
           ;
+
+    fprintf(stdout, " Parsing arguments...\n ");
 
     /* process arguments */
 #ifdef HAVE_GETOPT_LONG
