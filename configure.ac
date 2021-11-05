@@ -826,7 +826,5 @@ hoard_dir=/home/yihan-18/Hoard/src
 LDFLAGS="-L$hoard_dir $LDFLAGS"
 LIBS="$LIBS -lhoard"
 
-LIBS="$LIBS -levent"
-
 AC_CONFIG_FILES(Makefile doc/Makefile)
 AC_OUTPUT
