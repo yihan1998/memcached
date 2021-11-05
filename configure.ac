@@ -822,7 +822,7 @@ LIBS="$LIBS -lmthread"
 dnl Link to Hoard
 hoard_dir=/home/yihan-18/Hoard/src
 LDFLAGS="-L$hoard_dir $LDFLAGS"
-LIBS="$LIBS -lhoard"'
+LIBS="$LIBS -lhoard"
 
 CFLAGS="$CFLAGS -O3"
 
