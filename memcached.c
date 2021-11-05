@@ -4599,11 +4599,11 @@ int memcached_main (void * arg) {
     int argc = ((struct cetus_param *)arg)->argc;
     char ** argv = ((struct cetus_param *)arg)->argv;
 
-    fprintf(stdout, " ======================= ");
+    fprintf(stdout, " ======================= \n");
     for (int i = 0; i < argc; i++) {
         fprintf(stdout, " \t argv[%d]: %s\n", i, argv[i]);
     }
-    fprintf(stdout, " ======================= ");
+    fprintf(stdout, " ======================= \n");
     
     int c;
     bool lock_memory = false;
@@ -4817,6 +4817,7 @@ int memcached_main (void * arg) {
           ;
 
     fprintf(stdout, " Parsing arguments...\n ");
+    optind = 1;
 
     /* process arguments */
 #ifdef HAVE_GETOPT_LONG
@@ -5513,8 +5514,9 @@ int memcached_main (void * arg) {
             free(subopts_orig);
             break;
         default:
-            fprintf(stderr, "Illegal argument \"%c\"\n", c);
-            return 1;
+            // fprintf(stderr, "Illegal argument \"%c\"\n", c);
+            // return 1;
+            break;
         }
     }
 
