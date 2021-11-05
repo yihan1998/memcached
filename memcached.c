@@ -6082,7 +6082,7 @@ int main(int argc, char ** argv) {
 
     cetus_spawn(memcached_main, param);
 
-    log(DEBUG, " [%s on core %d] test finished, return from main", __func__, lcore_id);
+    fprintf(stdout, " [%s on core %d] test finished, return from main", __func__, lcore_id);
 
     return 0;
 }
