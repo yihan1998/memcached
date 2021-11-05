@@ -61,13 +61,20 @@
 #include <sys/sysctl.h>
 #endif
 
+#include "cetus.h"
+#include "cetus_api.h"
+
+#include "mthread.h"
+
+#include "sail.h"
+
 /*
  * forward declarations
  */
 static void drive_machine(conn *c);
 static int new_socket(struct addrinfo *ai);
 static ssize_t tcp_read(conn *arg, void *buf, size_t count);
-static ssize_t tcp_sendmsg(conn *arg, struct msghdr *msg, int flags);
+// static ssize_t tcp_sendmsg(conn *arg, struct msghdr *msg, int flags);
 static ssize_t tcp_write(conn *arg, void *buf, size_t count);
 
 enum try_read_result {
@@ -132,17 +139,19 @@ enum transmit_result {
 /* Default methods to read from/ write to a socket */
 ssize_t tcp_read(conn *c, void *buf, size_t count) {
     assert (c != NULL);
-    return read(c->sfd, buf, count);
+    // return read(c->sfd, buf, count);
+    return cetus_read(c->sfd, buf, count);
 }
 
-ssize_t tcp_sendmsg(conn *c, struct msghdr *msg, int flags) {
-    assert (c != NULL);
-    return sendmsg(c->sfd, msg, flags);
-}
+// ssize_t tcp_sendmsg(conn *c, struct msghdr *msg, int flags) {
+//     assert (c != NULL);
+//     return sendmsg(c->sfd, msg, flags);
+// }
 
 ssize_t tcp_write(conn *c, void *buf, size_t count) {
     assert (c != NULL);
-    return write(c->sfd, buf, count);
+    // return write(c->sfd, buf, count);
+    return cetus_write(c->sfd, buf, count);
 }
 
 static enum transmit_result transmit(conn *c);
@@ -772,7 +781,7 @@ conn *conn_new(const int sfd, enum conn_states init_state,
 #endif
     {
         c->read = tcp_read;
-        c->sendmsg = tcp_sendmsg;
+        // c->sendmsg = tcp_sendmsg;
         c->write = tcp_write;
     }
 
@@ -3361,11 +3370,12 @@ static int new_socket(struct addrinfo *ai) {
     int sfd;
     int flags;
 
-    if ((sfd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol)) == -1) {
+    // if ((sfd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol)) == -1) {
+    if ((sfd = cetus_socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol)) == -1) {
         return -1;
     }
 
-    if ((flags = fcntl(sfd, F_GETFL, 0)) < 0 ||
+    if ((flags = cetus_fcntl(sfd, F_GETFL, 0)) < 0 ||
         fcntl(sfd, F_SETFL, flags | O_NONBLOCK) < 0) {
         perror("setting O_NONBLOCK");
         close(sfd);
@@ -4580,7 +4590,13 @@ static int _mc_meta_load_cb(const char *tag, void *ctx, void *data) {
     return reuse_mmap;
 }
 
-int main (int argc, char **argv) {
+// int main (int argc, char **argv) {
+int memcached_main (void * arg) {
+    cetus_init((struct cetus_param *)arg);
+
+    int argc = arg->argc;
+    char ** argv = arg->argv;
+
     int c;
     bool lock_memory = false;
     bool do_daemonize = false;
@@ -6015,6 +6031,8 @@ int main (int argc, char **argv) {
     /* Initialize the uriencode lookup table. */
     uriencode_init();
 
+    // sail_init();
+
     /* enter the event loop */
     while (!stop_main_loop) {
         if (event_base_loop(main_base, EVLOOP_ONCE) != 0) {
@@ -6035,6 +6053,8 @@ int main (int argc, char **argv) {
         break;
     }
 
+    // sail_exit();
+
     stop_threads();
     if (settings.memory_file != NULL && stop_main_loop == GRACE_STOP) {
         restart_mmap_close();
@@ -6053,4 +6073,14 @@ int main (int argc, char **argv) {
     free(meta);
 
     return retval;
+}
+
+int main(int argc, char ** argv) {
+    struct cetus_param * param = cetus_config(argc, argv);
+
+    cetus_spawn(memcached_main, param);
+
+    log(DEBUG, " [%s on core %d] test finished, return from main", __func__, lcore_id);
+
+    return 0;
 }
