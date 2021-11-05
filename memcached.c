@@ -4809,11 +4809,7 @@ int memcached_main (void * arg) {
           "o:"  /* Extended generic options */
           "N:"  /* NAPI ID based thread selection */
           ;
-#ifdef HAVE_GETOPT_LONG
-    fprintf(stdout, " have getopt_long!\n");
-#else
-    fprintf(stdout, " have getopt!\n");
-#endif
+
     /* process arguments */
 #ifdef HAVE_GETOPT_LONG
     const struct option longopts[] = {
@@ -4961,6 +4957,7 @@ int memcached_main (void * arg) {
             break;
         case 'u':
             username = optarg;
+            fprintf(stdout, " Username: %s\n", username);
             break;
         case 'P':
             pid_file = optarg;
